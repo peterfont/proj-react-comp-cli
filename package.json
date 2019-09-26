@@ -1,0 +1,51 @@
+{
+  "name": "proj-react-comp-cli",
+  "version": "1.0.0",
+  "description": "Package to print some random fruit I eat.",
+  "main": "lib/index.js",
+  "engines": {
+    "node": ">= 6"
+  },
+  "bin": {
+    "snippet": "./bin/index.js"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build",
+    "watch": "rollup -w -c "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/peterfont/proj-react-comp-cli.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/peterfont/proj-react-comp-cli/issues"
+  },
+  "homepage": "https://github.com/peterfont/proj-react-comp-cli#readme",
+  "devDependencies": {
+    "@babel/core": "^7.6.0",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/preset-env": "^7.6.0",
+    "core-js": "^2.6.9",
+    "rollup": "^1.21.4",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-json": "^4.0.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-terser": "^5.1.2"
+  },
+  "dependencies": {
+    "axios": "^0.19.0",
+    "chalk": "^2.4.2",
+    "commander": "^3.0.1",
+    "dotenv": "^8.1.0",
+    "download-git-repo": "^2.0.0",
+    "execa": "^2.0.4",
+    "inquirer": "^7.0.0",
+    "lodash": "^4.17.15",
+    "ora": "^4.0.1"
+  }
+}
