@@ -21,6 +21,12 @@ const getData = async (mock, tip) => {
   spinner.stop();
   return ret;
 }
+// TODO: 提供检查组件是否已经被创建仓库的问题
+// TODO: 提供创建githooks的接口
+// TODO: 提供创建gitlab项目的工具
+// TODO: 提供自动创建jekins job的工具
+// TODO: 创建jekins job
+// TODO: 提供更新组件仓库地址和资源地址的接口
 const git_url = 'git@github.com:peterfont/webpack-project-template.git';
 export default {
   // 检查组件是否已经被创建
