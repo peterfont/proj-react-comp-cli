@@ -21,7 +21,7 @@ const getData = async (mock, tip) => {
   spinner.stop();
   return ret;
 }
-const git_url = 'git@github.com:peterfont/proj-react-comp-cli.git';
+const git_url = 'git@github.com:peterfont/webpack-project-template.git';
 export default {
   // 检查组件是否已经被创建
   checkComponentRepositoryIsExit : async () => {

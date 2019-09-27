@@ -5,6 +5,7 @@ import execa from 'execa';
 import fs from 'fs';
 import ora from 'ora';
 import path from 'path';
+import jsonFormat from 'json-format';
 const tildify = require('tildify');
 const chalk = require('chalk');
 const download = require('download-git-repo');
@@ -24,6 +25,9 @@ export default class CreateTask {
       username,
       repository,
     }
+  }
+  setLocalDir = (dir) => {
+    this.meta.dir = dir;
   }
   getRepositoryName =  () => {
     const { name } = this.meta;
@@ -64,7 +68,6 @@ export default class CreateTask {
     if (!isSucceed) {
       return fatal('创建远程仓库失败:', new Error(msg));
     }
-    success('组件远程创建：成功！');
     log(`远程仓库地址：${repository}`);
     this.setMetaGitInfo({ username, project, repository});
   }
@@ -72,10 +75,11 @@ export default class CreateTask {
     const { git = { } } = this.meta;
     const { project } = git;
     const { TEMPLATE: template } = process.env;
-    log(`开始创建项目 ${chalk.yellow(tildify(project))}`);
-    const spinner = ora("下载项目模板");
+    log(`开始创建项目 ${project}`);
+    const spinner = ora('下载项目模板');
     const inPlace = !project || project === ".";
     const to = path.resolve(project || ".");
+    
     spinner.start();
     try {
       await new Promise((resolve, rejected) => {
@@ -91,7 +95,32 @@ export default class CreateTask {
       fatal(`下载失败${template}`, e);
     }
     spinner.stop();
-    log(`创建项目 ${chalk.yellow('success')}`);
+    this.setLocalDir(to);
+    log(`创建本地目录 ${chalk.green('success')}`);
+  }
+  modifyLocalConfig = async () => {
+    // 读取并修改package.json
+    log('初始化配置：package.json');
+    const packagePath = `${this.meta.dir}/package.json`;
+    const source = require(packagePath);
+    source.name = this.meta.name;
+    const subprocess = execa('echo', [jsonFormat(source)]);
+    subprocess.stdout.pipe(fs.createWriteStream(packagePath));
+    await subprocess;
+  }
+  initLocalGit = async () => {
+    const packagePath = `${this.meta.dir}`;
+    const spinner = ora('初始化配置：git');
+    spinner.start();
+    process.chdir(packagePath);
+    await execa('git',['init']);
+    await execa('git',['remote','add','origin', this.meta.git.repository]);
+    await execa('git',['add','.']);
+    await execa('git',['commit','-m', '\'init\'']);
+    await execa('git', ['remote', 'update']);
+    await execa('git',['branch', '-u', 'origin/master', 'master']);
+    spinner.stop();
+    log('初始化配置：git');
   }
   run = async () => {
     // 检查项目是否存在
@@ -100,5 +129,10 @@ export default class CreateTask {
     await this.createRemoteRepository();
     // 创建本地文件
     await this.downTemplate();
+    // 修改本地配置
+    await this.modifyLocalConfig();
+    // 初始化本地git
+    await this.initLocalGit();
+    log(`创建项目 ${chalk.green('success')}`);
   }
 }
